@@ -4,58 +4,642 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////
 /*
-class SparseMatrix;             // forward declaration
+                block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
 
-class MatrixTerm
+class game_matrix;					// forward declaration
+class block							// class block
 {
-    friend SparseMatrix;
-    private:
-        int row;
-        int col;
-        int value;
-};
-
-class SparseMatrix
-{
-    private:
-        int row;
-        int col;
-        int terms;              // total number of nonzero entries
-        int capacity;           // the size of smArray
-        MatrixTerm *smArray;
+    friend game_matrix;
+    protected:
+        bool **block_matrix;        // 4 * 4 matrix
     public:
-        SparseMatrix(int r, int c);
-        ~SparseMatrix();
+        block();
+        ~block();
         void show();
-
 };
 
-SparseMatrix::SparseMatrix(int r, int c) :row(r), col(c) {};
-
-SparseMatrix::~SparseMatrix()
+block::block()						// constructor
 {
-    row = 0;
-    col = 0;
-    delete [] smArray;
-}
+    block_matrix = new bool *[4];
+    for (int i = 0; i < 4; i++) {
+        block_matrix[i] = new bool [4];
+    }
+};
 
-void SparseMatrix::show()
+block::~block()						// destructor
 {
-    int k = 0;
-    for (int i = 0; i < row; i++) {
-        for (int j = 0; j < col; j++) {
-            if (smArray[k].row == i && smArray[k].col == j)
-                cout << smArray[k++].value << " ";
-            else
-                cout << "0 ";
+    for (int i = 0; i < 4; i++) {
+        delete block_matrix[i];
+    }
+    delete block_matrix;
+};
+
+void block::show()					// show block_matrix
+{
+    cout << "block_matrix:" << endl;
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            cout << block_matrix[i][j] << " ";
         }
         cout << endl;
     }
-};
-*/
+}
+
 ////////////////////////////////////////////////////////////////////////////
 /*
-                game_matrix class definition start
+                block definition end                
+*/
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                T_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class T_block:public block
+{
+    public:
+        T_block(int type_number);
+        ~T_block();
+};
+
+T_block::T_block(int type_number)
+{
+    if (type_number == 1) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 1;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 0; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 2) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 1;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 0; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 3) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 0;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 1;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 4) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 1;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 0;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else {
+        cout << "invalid type_number" << endl;
+    }    
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                T_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                L_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class L_block:public block
+{
+    public:
+        L_block(int type_number);
+        ~L_block();
+};
+
+L_block::L_block(int type_number)
+{
+    if (type_number == 1) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 1;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 0;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 2) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;        
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 1;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 0;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 3) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 1;
+        block_matrix[1][1] = 1;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 0;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 0; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 4) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 0;
+        block_matrix[2][1] = 0;
+        block_matrix[2][2] = 1;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 1;
+        block_matrix[3][3] = 0;
+    }
+    else {
+        cout << "invalid type_number" << endl;
+    }    
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                L_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                J_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class J_block:public block
+{
+    public:
+        J_block(int type_number);
+        ~J_block();
+};
+
+J_block::J_block(int type_number)
+{
+    if (type_number == 1) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 1;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 0;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 2) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;        
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 0;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 1;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 3) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 1;
+        block_matrix[1][1] = 1;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 0;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 0;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 4) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 1;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 0; 
+        block_matrix[3][1] = 0;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 1;
+    }
+    else {
+        cout << "invalid type_number" << endl;
+    }    
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                J_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                S_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class S_block:public block
+{
+    public:
+        S_block(int type_number);
+        ~S_block();
+};
+
+S_block::S_block(int type_number)
+{
+    if (type_number == 1) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 0;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 1;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 2) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 1;        
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 0; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }    
+    else {
+        cout << "invalid type_number" << endl;
+    }    
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                S_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                Z_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class Z_block:public block
+{
+    public:
+        Z_block(int type_number);
+        ~Z_block();
+};
+
+Z_block::Z_block(int type_number)
+{
+    if (type_number == 1) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 0; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 1;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 2) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;        
+        block_matrix[1][1] = 1;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 1;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 0;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }    
+    else {
+        cout << "invalid type_number" << endl;
+    }    
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                Z_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                I_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class I_block:public block
+{
+    public:
+        I_block(int type_number);
+        ~I_block();
+};
+
+I_block::I_block(int type_number)
+{
+    if (type_number == 1) {
+        block_matrix[0][0] = 1;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 1;
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 1;
+        block_matrix[2][1] = 0;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 0;
+        block_matrix[3][2] = 0;
+        block_matrix[3][3] = 0;
+    }
+    else if (type_number == 2) {
+        block_matrix[0][0] = 0;
+        block_matrix[0][1] = 0;
+        block_matrix[0][2] = 0;
+        block_matrix[0][3] = 0;
+        
+        block_matrix[1][0] = 0;        
+        block_matrix[1][1] = 0;
+        block_matrix[1][2] = 0;
+        block_matrix[1][3] = 0;
+        
+        block_matrix[2][0] = 0;
+        block_matrix[2][1] = 0;
+        block_matrix[2][2] = 0;
+        block_matrix[2][3] = 0;
+        
+        block_matrix[3][0] = 1; 
+        block_matrix[3][1] = 1;
+        block_matrix[3][2] = 1;
+        block_matrix[3][3] = 1;
+    }    
+    else {
+        cout << "invalid type_number" << endl;
+    }    
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                I_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                O_block definition start
+*/
+////////////////////////////////////////////////////////////////////////////
+
+class O_block:public block
+{
+    public:
+        O_block(int type_number);
+        ~O_block();
+};
+
+O_block::O_block(int type_number)
+{
+    block_matrix[0][0] = 0;
+    block_matrix[0][1] = 0;
+    block_matrix[0][2] = 0;
+    block_matrix[0][3] = 0;
+        
+    block_matrix[1][0] = 0;
+    block_matrix[1][1] = 0;
+    block_matrix[1][2] = 0;
+    block_matrix[1][3] = 0;
+        
+    block_matrix[2][0] = 0;
+    block_matrix[2][1] = 1;
+    block_matrix[2][2] = 1;
+    block_matrix[2][3] = 0;
+       
+    block_matrix[3][0] = 1; 
+    block_matrix[3][1] = 1;
+    block_matrix[3][2] = 0;
+    block_matrix[3][3] = 0;
+};
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                O_block definition end
+*/                
+////////////////////////////////////////////////////////////////////////////
+
+
+////////////////////////////////////////////////////////////////////////////
+/*
+                game_matrix definition start
 */
 ////////////////////////////////////////////////////////////////////////////
 
@@ -69,8 +653,9 @@ class game_matrix
         game_matrix(int r, int c);
         ~game_matrix();
         void show();
-        void drop(block &b);
+        void drop(char blocktype, int type_number, int startcol, block *temp);
         void clear_row(int deleted_row);
+        void putin(char blocktype, int type_number, int put_row, int put_col, block *temp);
 
 };
 
@@ -98,6 +683,7 @@ game_matrix::~game_matrix()
 
 void game_matrix::show() // show whole
 {
+    cout << "game_matrix:" << endl;
     for (int i = 0; i < row; i++) {
         for (int j = 0; j < col; j++) {
             cout << value[i][j] << " ";
@@ -106,17 +692,106 @@ void game_matrix::show() // show whole
     }
 };
 
-void game_matrix::clear_row(int deleted_row)
+void game_matrix::drop(char blocktype, int type_number, int startcol, block *temp)
 {
-    for (int i = deleted_row; i > 0; i--) {        
+    int des;
+    startcol--;
+    if (blocktype == 'T') {
+        if (type_number == 1) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {                              // not touch bottom
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+                if (value[des][startcol] == 1) break;                
+                if (value[des][startcol + 2] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "T1 des: " << des << endl;
+        }
+        else if (type_number == 2) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+                if (value[des][startcol] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "T2 des: " << des << endl;
+        }
+        else if (type_number == 3) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des+1][startcol] == 1) break;
+                    if (value[des+1][startcol + 1] == 1) break;
+                    if (value[des+1][startcol + 2] == 1) break;
+                }                
+            }
+            if (des == row) des--;
+            cout << "T3 des: " << des << endl;
+        }
+        else if (type_number == 4) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                }
+                if (value[des][startcol + 1] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "T4 des: " << des << endl;
+        }
+        else cout << "invalid type_number in game_matrix.drop()" << endl;
+    }
+    
+    this->putin(blocktype, type_number, des, startcol, temp);
+    cout << "des: " << des << endl;
+};
+
+void game_matrix::check(int des)
+{
+    int deleted_row;
+    int number_of_deleted_row = 0;
+    bool need_to_delete;
+
+    
+    for (int i = des; i >= 0; i--) {
+        need_to_delete = 1;
         for (int j = 0; j < col; j++) {
-            value[i][j] = value[i - 1][j];
+            if (value[i][j] == 0)
+                need_to_delete = 0;
+        }
+        if (need_to_delete) {
+            if (i > deleted_row) deleted_row = i;
+            number_of_deleted_row++;
         }
     }
+    this->clear_row(deleted_row, number_of_deleted_row);
+};
 
-    for (int j = 0; j < col; j++) {
-        value[0][j] = 0;
+void game_matrix::putin(char blocktype, int type_number, int put_row, int put_col, block *temp)
+{
+    for (int i = 4 - 1; i >= 0; i--) {
+        for (int j = 0; j < 4; j++) {
+            if (temp->block_matrix[i][j] == 1)
+            value[put_row - 3 + i][put_col + j] = 1;
+        }
     }
+};
+
+void game_matrix::clear_row(int deleted_row, int number_of_deleted_row)
+{
+    if (deleted_row > number_of_deleted_row) {
+        for (int i = deleted_row; i >= number_of_deleted_row; i--) {        
+            for (int j = 0; j < col; j++) {
+                value[i][j] = value[i - number_of_deleted_row][j];
+            }
+        }
+        for (int i = 0; i < number_of_deleted_row; i++) {
+            for (int j = 0; j < col; j++) {
+                value[i][j] = 0;
+            }
+        }
+    }
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -128,158 +803,9 @@ void game_matrix::clear_row(int deleted_row)
 
 ////////////////////////////////////////////////////////////////////////////
 /*
-                block definition start
+                main program start
 */
 ////////////////////////////////////////////////////////////////////////////
-
-class block
-{
-    protected:
-        bool **block_matrix;        // 4 * 4 matrix
-        int refrence_row;
-        int refrence_col;
-    public:
-        block();
-        ~block();
-        void show();
-};
-
-block::block()
-{
-    block_matrix = new bool *[4];
-    for (int i = 0; i < 4; i++) {
-        block_matrix[i] = new bool [4];
-    }
-};
-
-block::~block()
-{
-    for (int i = 0; i < 4; i++) {
-        delete block_matrix[i];
-    }
-    delete block_matrix;
-};
-
-void block::show()
-{
-    for (int i = 0; i < 4; i++) {
-        for (int j = 0; j < 4; j++) {
-            cout << block_matrix[i][j] << " ";
-        }
-        cout << endl;
-    }
-}
-
-class T_block:public block
-{
-    public:
-        T_block();
-        T_block(int type_number, int stratcol);
-        ~T_block();
-};
-
-T_block::T_block()
-{
-    refrence_row = 0;
-    refrence_col = 0;
-};
-
-T_block::T_block(int type, int startcol)
-{
-    refrence_row = 0;
-    refrence_col = startcol - 1;
-    if (type == 1) {
-        block_matrix[0][0] = 0;
-        block_matrix[0][1] = 0;
-        block_matrix[0][2] = 0;
-        block_matrix[0][3] = 0;
-        block_matrix[1][0] = 0;
-        block_matrix[1][1] = 0;
-        block_matrix[1][2] = 0;
-        block_matrix[1][3] = 0;
-        block_matrix[2][0] = 1;
-        block_matrix[2][1] = 1;
-        block_matrix[2][2] = 1;
-        block_matrix[2][3] = 0;
-        block_matrix[3][0] = 0; 
-        block_matrix[3][1] = 1;
-        block_matrix[3][2] = 0;
-        block_matrix[3][3] = 0;
-    }
-    else if (type == 2) {
-        block_matrix[0][0] = 0;
-        block_matrix[0][1] = 0;
-        block_matrix[0][2] = 0;
-        block_matrix[0][3] = 0;
-        block_matrix[1][0] = 0;
-        block_matrix[1][1] = 1;
-        block_matrix[1][2] = 0;
-        block_matrix[1][3] = 0;
-        block_matrix[2][0] = 1;
-        block_matrix[2][1] = 1;
-        block_matrix[2][2] = 0;
-        block_matrix[2][3] = 0;
-        block_matrix[3][0] = 0; 
-        block_matrix[3][1] = 1;
-        block_matrix[3][2] = 0;
-        block_matrix[3][3] = 0;
-    }
-    else if (type == 3) {
-        block_matrix[0][0] = 0;
-        block_matrix[0][1] = 0;
-        block_matrix[0][2] = 0;
-        block_matrix[0][3] = 0;
-        block_matrix[1][0] = 0;
-        block_matrix[1][1] = 0;
-        block_matrix[1][2] = 0;
-        block_matrix[1][3] = 0;
-        block_matrix[2][0] = 0;
-        block_matrix[2][1] = 1;
-        block_matrix[2][2] = 0;
-        block_matrix[2][3] = 0;
-        block_matrix[3][0] = 1; 
-        block_matrix[3][1] = 1;
-        block_matrix[3][2] = 1;
-        block_matrix[3][3] = 0;
-    }
-    else if (type == 4) {
-        block_matrix[0][0] = 0;
-        block_matrix[0][1] = 0;
-        block_matrix[0][2] = 0;
-        block_matrix[0][3] = 0;
-        block_matrix[1][0] = 1;
-        block_matrix[1][1] = 0;
-        block_matrix[1][2] = 0;
-        block_matrix[1][3] = 0;
-        block_matrix[2][0] = 1;
-        block_matrix[2][1] = 1;
-        block_matrix[2][2] = 0;
-        block_matrix[2][3] = 0;
-        block_matrix[3][0] = 1; 
-        block_matrix[3][1] = 0;
-        block_matrix[3][2] = 0;
-        block_matrix[3][3] = 0;
-    }
-    else {
-        cout << "invalid type_number" << endl;
-    }
-    
-};
-
-////////////////////////////////////////////////////////////////////////////
-/*
-                block definition end
-*/                
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////
-
-
-////////////////////////////////////////////////////////////////////////////
-
 
 int main(int argc, char *argv[])
 {
@@ -299,18 +825,25 @@ int main(int argc, char *argv[])
     cout << "bolcktype: " << blocktype << endl;
     cout << "type_number: " << type_number << endl;
     while (blocktype != 'E') {
-        if (blocktype == 'T') {
-            temp = new T_block(type_number, startcol);
-        }
-        else {
-            cout << "invalid blocktype" << endl;
-        }
+        if (blocktype == 'T') temp = new T_block(type_number);
+        else if (blocktype == 'L') temp = new L_block(type_number);
+        else if (blocktype == 'J') temp = new J_block(type_number);
+        else if (blocktype == 'S') temp = new S_block(type_number);
+        else if (blocktype == 'Z') temp = new Z_block(type_number);
+        else if (blocktype == 'I') temp = new I_block(type_number);
+        else if (blocktype == 'O') temp = new O_block;
+        else cout << "invalid blocktype" << endl;
         temp->show();
+
+
+        mm.drop(blocktype, type_number, startcol, temp);
+        mm.show();
+
         cin >> blocktype >> type_number >> startcol >> shift;
         cout << "bolcktype: " << blocktype << endl;
-        cout << "type_number: " << type_number << endl;
+        cout << "type_number: " << type_number << endl;        
     }
-//    gernerate_block();
+
 /*
     ifstream infile;                                // input data
     infile.open(argv[1]);                           // open input data
@@ -341,15 +874,8 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+////////////////////////////////////////////////////////////////////////////
 /*
-move()
-{
-    while (not_touch()) {
-    down();
-    }
-    shift();
-    while (not_touch()) {
-    down();
-    }
-}
+                main program end
 */
+////////////////////////////////////////////////////////////////////////////
