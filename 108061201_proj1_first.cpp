@@ -603,11 +603,11 @@ I_block::I_block(int type_number)
 class O_block:public block
 {
     public:
-        O_block(int type_number);
+        O_block();
         ~O_block();
 };
 
-O_block::O_block(int type_number)
+O_block::O_block()
 {
     block_matrix[0][0] = 0;
     block_matrix[0][1] = 0;
@@ -654,7 +654,8 @@ class game_matrix
         ~game_matrix();
         void show();
         void drop(char blocktype, int type_number, int startcol, block *temp);
-        void clear_row(int deleted_row);
+        void check(int des);
+        void clear_row(int deleted_row, int number_of_deleted_row);
         void putin(char blocktype, int type_number, int put_row, int put_col, block *temp);
 
 };
@@ -743,12 +744,23 @@ void game_matrix::drop(char blocktype, int type_number, int startcol, block *tem
     }
     
     this->putin(blocktype, type_number, des, startcol, temp);
-    cout << "des: " << des << endl;
+    this->show();
+    this->check(des);
+};
+
+void game_matrix::putin(char blocktype, int type_number, int put_row, int put_col, block *temp)
+{
+    for (int i = 4 - 1; i >= 0; i--) {
+        for (int j = 0; j < 4; j++) {
+            if (temp->block_matrix[i][j] == 1)
+            value[put_row - 3 + i][put_col + j] = 1;
+        }
+    }
 };
 
 void game_matrix::check(int des)
 {
-    int deleted_row;
+    int deleted_row = 0;
     int number_of_deleted_row = 0;
     bool need_to_delete;
 
@@ -764,22 +776,12 @@ void game_matrix::check(int des)
             number_of_deleted_row++;
         }
     }
-    this->clear_row(deleted_row, number_of_deleted_row);
-};
-
-void game_matrix::putin(char blocktype, int type_number, int put_row, int put_col, block *temp)
-{
-    for (int i = 4 - 1; i >= 0; i--) {
-        for (int j = 0; j < 4; j++) {
-            if (temp->block_matrix[i][j] == 1)
-            value[put_row - 3 + i][put_col + j] = 1;
-        }
-    }
+    if (number_of_deleted_row > 0) this->clear_row(deleted_row, number_of_deleted_row);
 };
 
 void game_matrix::clear_row(int deleted_row, int number_of_deleted_row)
 {
-    if (deleted_row > number_of_deleted_row) {
+    if (deleted_row >= number_of_deleted_row) {
         for (int i = deleted_row; i >= number_of_deleted_row; i--) {        
             for (int j = 0; j < col; j++) {
                 value[i][j] = value[i - number_of_deleted_row][j];
@@ -791,7 +793,13 @@ void game_matrix::clear_row(int deleted_row, int number_of_deleted_row)
             }
         }
     }
-    
+    else {
+        for (int i = 0; i <= deleted_row; i++) {
+            for (int j = 0; j < col; j++) {
+                value[i][j] = 0;
+            }
+        }
+    }    
 }
 
 ////////////////////////////////////////////////////////////////////////////
