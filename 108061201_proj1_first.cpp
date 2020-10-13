@@ -372,8 +372,8 @@ J_block::J_block(int type_number)
         
         block_matrix[3][0] = 0; 
         block_matrix[3][1] = 0;
-        block_matrix[3][2] = 0;
-        block_matrix[3][3] = 1;
+        block_matrix[3][2] = 1;
+        block_matrix[3][3] = 0;
     }
     else {
         cout << "invalid type_number" << endl;
@@ -619,9 +619,9 @@ O_block::O_block()
     block_matrix[1][2] = 0;
     block_matrix[1][3] = 0;
         
-    block_matrix[2][0] = 0;
+    block_matrix[2][0] = 1;
     block_matrix[2][1] = 1;
-    block_matrix[2][2] = 1;
+    block_matrix[2][2] = 0;
     block_matrix[2][3] = 0;
        
     block_matrix[3][0] = 1; 
@@ -653,10 +653,11 @@ class game_matrix
         game_matrix(int r, int c);
         ~game_matrix();
         void show();
-        void drop(char blocktype, int type_number, int startcol, block *temp);
-        void check(int des);
+        int drop_des(char blocktype, int type_number, int des, int startcol, block *temp);
+        void check_delete(int des);
         void clear_row(int deleted_row, int number_of_deleted_row);
-        void putin(char blocktype, int type_number, int put_row, int put_col, block *temp);
+        bool putin_valid(int put_row, int put_col, block *temp);
+        bool upboundary_valid();
 
 };
 
@@ -685,7 +686,7 @@ game_matrix::~game_matrix()
 void game_matrix::show() // show whole
 {
     cout << "game_matrix:" << endl;
-    for (int i = 0; i < row; i++) {
+    for (int i = 0 + 4; i < row; i++) {
         for (int j = 0; j < col; j++) {
             cout << value[i][j] << " ";
         }
@@ -693,9 +694,9 @@ void game_matrix::show() // show whole
     }
 };
 
-void game_matrix::drop(char blocktype, int type_number, int startcol, block *temp)
+int game_matrix::drop_des(char blocktype, int type_number, int des, int startcol, block *temp)
 {
-    int des;
+    //int des = 0;
     startcol--;
     if (blocktype == 'T') {
         if (type_number == 1) {
@@ -722,9 +723,9 @@ void game_matrix::drop(char blocktype, int type_number, int startcol, block *tem
         else if (type_number == 3) {
             for (des = 0; des < row; des++) {
                 if (des < row - 1) {
-                    if (value[des+1][startcol] == 1) break;
-                    if (value[des+1][startcol + 1] == 1) break;
-                    if (value[des+1][startcol + 2] == 1) break;
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                    if (value[des + 1][startcol + 2] == 1) break;
                 }                
             }
             if (des == row) des--;
@@ -742,23 +743,206 @@ void game_matrix::drop(char blocktype, int type_number, int startcol, block *tem
         }
         else cout << "invalid type_number in game_matrix.drop()" << endl;
     }
-    
-    this->putin(blocktype, type_number, des, startcol, temp);
-    this->show();
-    this->check(des);
+    else if (blocktype == 'L') {
+        if (type_number == 1) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {                              // not touch bottom
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "L1 des: " << des << endl;
+        }
+        else if (type_number == 2) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                }
+                if (value[des][startcol + 1] == 1) break;
+                if (value[des][startcol + 2] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "L2 des: " << des << endl;
+        }
+        else if (type_number == 3) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+                if (des > 0) {
+				    if (value[des - 1][startcol] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "L3 des: " << des << endl;
+        }
+        else if (type_number == 4) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                    if (value[des + 1][startcol + 2] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "L4 des: " << des << endl;
+        }
+        else cout << "invalid type_number in game_matrix.drop()" << endl;
+    }    
+	else if (blocktype == 'J') {
+        if (type_number == 1) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {                              // not touch bottom
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "J1 des: " << des << endl;
+        }
+        else if (type_number == 2) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                    if (value[des + 1][startcol + 2] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "J2 des: " << des << endl;
+        }
+        else if (type_number == 3) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                }
+                if (des > 0) {
+				    if (value[des - 1][startcol + 1] == 1) break;                
+                }
+            }
+            if (des == row) des--;
+            cout << "J3 des: " << des << endl;
+        }
+        else if (type_number == 4) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol + 2] == 1) break;
+                }
+                if (value[des][startcol] == 1) break;
+                if (value[des][startcol + 1] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "J4 des: " << des << endl;
+        }
+        else cout << "invalid type_number in game_matrix.drop()" << endl;
+    } 
+	else if (blocktype == 'S') {
+        if (type_number == 1) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {                              // not touch bottom
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+                if (value[des][startcol + 2] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "S1 des: " << des << endl;
+        }
+        else if (type_number == 2) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol + 1] == 1) break;
+                }
+                if (value[des][startcol] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "S2 des: " << des << endl;
+        }
+        else cout << "invalid type_number in game_matrix.drop()" << endl;
+	}
+	else if (blocktype == 'Z') {
+        if (type_number == 1) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {                              // not touch bottom
+                    if (value[des + 1][startcol + 1] == 1) break;
+                    if (value[des + 1][startcol + 2] == 1) break;
+                }
+                if (value[des][startcol] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "Z1 des: " << des << endl;
+        }
+        else if (type_number == 2) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                }
+                if (value[des][startcol + 1] == 1) break;
+            }
+            if (des == row) des--;
+            cout << "Z2 des: " << des << endl;
+        }
+        else cout << "invalid type_number in game_matrix.drop()" << endl;
+	}
+	else if (blocktype == 'I') {
+        if (type_number == 1) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {                              // not touch bottom
+                    if (value[des + 1][startcol] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "I1 des: " << des << endl;
+        }
+        else if (type_number == 2) {
+            for (des = 0; des < row; des++) {
+                if (des < row - 1) {
+                    if (value[des + 1][startcol] == 1) break;
+                    if (value[des + 1][startcol + 1] == 1) break;
+                    if (value[des + 1][startcol + 2] == 1) break;
+                    if (value[des + 1][startcol + 3] == 1) break;
+                }
+            }
+            if (des == row) des--;
+            cout << "I2 des: " << des << endl;
+        }
+        else cout << "invalid type_number in game_matrix.drop()" << endl;
+	}
+	else if (blocktype == 'O') {
+		for (des = 0; des < row; des++) {
+	        if (des < row - 1) {
+                if (value[des + 1][startcol] == 1) break;
+                if (value[des + 1][startcol + 1] == 1) break;
+            }
+        }
+        if (des == row) des--;
+        cout << "O des: " << des << endl;
+	}
+	else cout << "Invalid blocktype in game_matrix.drop()" << endl;
+
+    return des;
 };
 
-void game_matrix::putin(char blocktype, int type_number, int put_row, int put_col, block *temp)
+bool game_matrix::putin_valid(int put_row, int put_col, block *temp)
 {
+    int valid = 1;
+    put_col--;
     for (int i = 4 - 1; i >= 0; i--) {
         for (int j = 0; j < 4; j++) {
-            if (temp->block_matrix[i][j] == 1)
-            value[put_row - 3 + i][put_col + j] = 1;
+            if (temp->block_matrix[i][j] == 1 && (put_col + j >= col || put_col + j < 0)) {
+                cout << "Shift over boundary" << endl;
+                valid = 0;
+                break;
+            }
+            else if (temp->block_matrix[i][j] == 1 && put_col + j < col && put_col + j >= 0)
+                value[put_row - 3 + i][put_col + j] = 1;
         }
     }
+    return valid;
 };
 
-void game_matrix::check(int des)
+void game_matrix::check_delete(int des)
 {
     int deleted_row = 0;
     int number_of_deleted_row = 0;
@@ -800,8 +984,28 @@ void game_matrix::clear_row(int deleted_row, int number_of_deleted_row)
             }
         }
     }    
-}
+};
 
+bool game_matrix::upboundary_valid()
+{
+    bool valid = 1;
+    for (int i = 3; i >= 0; i--) {
+        for (int j = 0; j < col; j++) {
+            if (value[i][j] == 1)
+                valid = 0;
+        }
+    }
+    return valid;
+};
+/*
+bool game_matrix::lrboundary_valid(int put_col)
+{
+    int valid;
+    put_col--;
+
+
+};
+*/
 ////////////////////////////////////////////////////////////////////////////
 /*
                 game_matrix definition end
@@ -824,32 +1028,60 @@ int main(int argc, char *argv[])
     int startcol;
     int shift;
     block *temp;
+    int des;
+    bool valid;
 
     cin >> row >> col;
     cout << "(row, col): (" << row << ", " << col << ")" << endl;
     game_matrix mm(row, col);
     mm.show();
-    cin >> blocktype >> type_number >> startcol >> shift;
-    cout << "bolcktype: " << blocktype << endl;
-    cout << "type_number: " << type_number << endl;
+    //cin >> blocktype >> type_number >> startcol >> shift;
+    cin >> blocktype;
+    //cout << "bolcktype: " << blocktype << endl;
+    //cout << "type_number: " << type_number << endl;
     while (blocktype != 'E') {
-        if (blocktype == 'T') temp = new T_block(type_number);
-        else if (blocktype == 'L') temp = new L_block(type_number);
-        else if (blocktype == 'J') temp = new J_block(type_number);
-        else if (blocktype == 'S') temp = new S_block(type_number);
-        else if (blocktype == 'Z') temp = new Z_block(type_number);
-        else if (blocktype == 'I') temp = new I_block(type_number);
-        else if (blocktype == 'O') temp = new O_block;
-        else cout << "invalid blocktype" << endl;
+        if (blocktype == 'O') {
+            temp = new O_block();
+            cin >> startcol >> shift;
+        }
+        else {
+            cin >> type_number >> startcol >> shift;
+            if (blocktype == 'T') temp = new T_block(type_number);
+            else if (blocktype == 'L') temp = new L_block(type_number);
+            else if (blocktype == 'J') temp = new J_block(type_number);
+            else if (blocktype == 'S') temp = new S_block(type_number);
+            else if (blocktype == 'Z') temp = new Z_block(type_number);
+            else if (blocktype == 'I') temp = new I_block(type_number);
+            //else if (blocktype == 'O') temp = new O_block();
+            else cout << "invalid blocktype" << endl;            
+        }
         temp->show();
 
 
-        mm.drop(blocktype, type_number, startcol, temp);
-        mm.show();
-
-        cin >> blocktype >> type_number >> startcol >> shift;
-        cout << "bolcktype: " << blocktype << endl;
-        cout << "type_number: " << type_number << endl;        
+        des = mm.drop_des(blocktype, type_number, 0, startcol, temp);
+        des = mm.drop_des(blocktype, type_number, des, startcol + shift, temp);
+        valid = mm.putin_valid(des, startcol + shift, temp); 
+        if (valid) {
+            cout << "Before Clear ";
+            mm.show();
+            mm.check_delete(des);
+        }
+        else {
+            cout << "Game over because touch left-right boundary" << endl;
+            break;
+        }
+        valid = mm.upboundary_valid();
+        if (valid)
+            mm.show();
+        else {
+            cout << "Game Over because touch up boundary" << endl;
+            break;
+        }
+        
+        //cin >> blocktype >> type_number >> startcol >> shift;
+        cin >> blocktype;
+        //cout << "blocktype: " << blocktype << endl;
+        //cout << "type_number: " << type_number << endl;        
     }
 
 /*
