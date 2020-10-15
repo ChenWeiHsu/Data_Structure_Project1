@@ -1004,15 +1004,7 @@ bool game_matrix::upboundary_valid()
     if (!valid) cout << "over up boundary" << endl;
     return valid;
 };
-/*
-bool game_matrix::lrboundary_valid(int put_col)
-{
-    int valid;
-    put_col--;
 
-
-};
-*/
 ////////////////////////////////////////////////////////////////////////////
 /*
                 game_matrix definition end
