@@ -1079,7 +1079,7 @@ int main(int argc, char *argv[])
     }
 */
 
-
+ 
     ifstream infile;                                // input data
     infile.open(argv[1]);                           // open input data
     if (!infile.is_open()) {
@@ -1128,6 +1128,8 @@ int main(int argc, char *argv[])
             break;
         }    
         infile >> blocktype;
+        delete temp;
+        temp = NULL;
     }        
 
     infile.close();                             // close input data
@@ -1143,7 +1145,7 @@ int main(int argc, char *argv[])
         outfile.close();
     }
     else cout << "Unable to open outfile";
-
+ 
     return 0;
 }
 
