@@ -1031,7 +1031,10 @@ int main(int argc, char *argv[])
             else if (blocktype == 'S') temp = new S_block(type_number);
             else if (blocktype == 'Z') temp = new Z_block(type_number);
             else if (blocktype == 'I') temp = new I_block(type_number);
-            else cout << "invalid blocktype" << endl;            
+            else {
+                cout << "invalid blocktype" << endl;
+                break;
+            }
         }
         des = mm.drop_des(blocktype, type_number, 0, startcol, temp);
         des = mm.drop_des(blocktype, type_number, des, startcol + shift, temp);
